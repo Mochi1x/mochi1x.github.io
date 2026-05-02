@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticker Tape Widget</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            background: #0d1117;
+            min-height: 100vh;
+        }
+        a { color: #0366d6; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #8b949e; }
+        .widget-wrapper {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .description {
+            color: #8b949e;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        footer {
+            text-align: center;
+            color: #8b949e;
+            margin-top: 30px;
+            font-size: 0.85em;
+        }
+        /* Make ticker full width */
+        tv-ticker-tape {
+            width: 100% !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to all widgets</a>
+        
+        <div class="widget-wrapper">
+            <h1 style="color: #f0f6fc; margin-bottom: 10px;">📊 Ticker Tape</h1>
+            <p class="description">
+                Real-time scrolling stock and crypto ticker. 
+                Shows S&P 500, NASDAQ, DOW, EUR/USD, BTC, ETH, and Gold prices.
+            </p>
+            
+            <!-- TradingView Ticker Tape Widget BEGIN -->
+            <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-ticker-tape.js"></script>
+            <tv-ticker-tape symbols="FOREXCOM:SPXUSD,FOREXCOM:NSXUSD,FOREXCOM:DJI,FX:EURUSD,BITSTAMP:BTCUSD,BITSTAMP:ETHUSD,CMCMARKETS:GOLD"></tv-ticker-tape>
+            <!-- TradingView Ticker Tape Widget END -->
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="/">← All widgets</a>
+        </div>
+
+        <footer>
+            <p>Widget powered by <a href="https://tradingview.com" target="_blank">TradingView</a></p>
+        </footer>
+    </div>
+</body>
+</html>
