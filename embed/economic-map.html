@@ -7,33 +7,20 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html, body {
-            background: transparent;
+            background: #000000;
             overflow: hidden;
             width: 100%;
             height: 100%;
             padding: 0;
             margin: 0;
         }
-        .widget-container {
+        /* Force black background on container */
+        .tradingview-widget-container {
+            background: #000000 !important;
             width: 100%;
             height: 100%;
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
         }
-        /* TradingView widgets - remove their default copyright margin/padding */
-        .tradingview-widget-copyright {
-            padding: 4px 0;
-            text-align: center;
-            font-size: 12px;
-            color: #8b949e;
-        }
-        .tradingview-widget-copyright a {
-            color: #0366d6;
-            text-decoration: none;
-        }
-        /* Ensure iframe-based widgets fill container */
-        tv-ticker-tape, tv-economic-map {
+        tv-economic-map {
             display: block;
             width: 100%;
             height: 100%;
@@ -41,9 +28,9 @@
     </style>
 </head>
 <body>
-    <div class="widget-container">
+    <div class="tradingview-widget-container">
         <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-economic-map.js"></script>
-<tv-economic-map></tv-economic-map>
+        <tv-economic-map></tv-economic-map>
     </div>
 </body>
 </html>
