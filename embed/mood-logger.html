@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Logger - Embed</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body {
+            background: transparent;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align: center; padding: 20px;">
+    <p>How are you feeling today?</p>
+    <div style="display: flex; gap: 10px; justify-content: center; margin: 20px 0; flex-wrap: wrap;">
+        <button onclick="selectMood('😄 Great')" style="font-size: 2em; padding: 10px; cursor: pointer; background: none; border: 2px solid transparent;">😄</button>
+        <button onclick="selectMood('🙂 Good')" style="font-size: 2em; padding: 10px; cursor: pointer; background: none; border: 2px solid transparent;">🙂</button>
+        <button onclick="selectMood('😐 Okay')" style="font-size: 2em; padding: 10px; cursor: pointer; background: none; border: 2px solid transparent;">😐</button>
+        <button onclick="selectMood('😔 Low')" style="font-size: 2em; padding: 10px; cursor: pointer; background: none; border: 2px solid transparent;">😔</button>
+    </div>
+    <p id="selected-mood" style="margin-top: 10px; font-weight: bold; color: #0366d6;"></p>
+</div>
+<script>
+function selectMood(mood) {
+    document.getElementById('selected-mood').innerHTML = 'Selected: ' + mood;
+}
+</script>
+</body>
+</html>

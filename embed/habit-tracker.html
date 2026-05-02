@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Tracker - Embed</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body {
+            background: transparent;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="habit-tracker" style="padding: 10px;">
+    <style>
+        .habit { display: flex; align-items: center; margin: 10px 0; padding: 10px; background: #f6f8fa; border-radius: 6px; }
+        .habit-name { flex: 1; }
+        .habit-check { width: 24px; height: 24px; cursor: pointer; }
+    </style>
+    <div class="habit">
+        <span class="habit-name">Drink water</span>
+        <input type="checkbox" class="habit-check">
+    </div>
+    <div class="habit">
+        <span class="habit-name">Exercise</span>
+        <input type="checkbox" class="habit-check">
+    </div>
+    <div class="habit">
+        <span class="habit-name">Read</span>
+        <input type="checkbox" class="habit-check">
+    </div>
+</div>
+</body>
+</html>

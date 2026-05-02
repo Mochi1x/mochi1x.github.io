@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown - Embed</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body {
+            background: transparent;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align: center; padding: 30px;">
+    <h2 style="margin-bottom: 20px; color: #2c3e50;">Countdown</h2>
+    <div id="countdown" style="font-size: 2.5em; font-weight: bold; color: #e74c3c; margin: 20px 0;">
+        00:00:00
+    </div>
+    <p style="color: #666; margin-bottom: 20px;">Time remaining</p>
+    <div>
+        <label>Target: <input type="datetime-local" id="target"></label>
+        <button onclick="startCountdown()" style="padding: 8px 16px; margin-left: 10px;">Start</button>
+    </div>
+</div>
+<script>
+let targetDate = new Date();
+targetDate.setDate(targetDate.getDate() + 7);
+document.getElementById('target').value = targetDate.toISOString().slice(0,16);
+function startCountdown() {
+    const input = document.getElementById('target').value;
+    if (input) targetDate = new Date(input);
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+}
+function updateCountdown() {
+    const now = new Date();
+    const diff = targetDate - now;
+    if (diff <= 0) {
+        document.getElementById('countdown').innerHTML = "Time's up!";
+        return;
+    }
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    document.getElementById('countdown').innerHTML = 
+        String(hours).padStart(2,'0') + ':' +
+        String(minutes).padStart(2,'0') + ':' +
+        String(seconds).padStart(2,'0');
+}
+</script>
+</body>
+</html>
