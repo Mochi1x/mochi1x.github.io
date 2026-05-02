@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Widget</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: sans-serif; padding: 20px; background: #fff5f5; min-height: 100vh; }
+        a { color: #0366d6; }
+    </style>
+</head>
+<body>
+    <a href="/">← Back</a>
+    <div style="max-width: 500px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <div style="text-align: center; padding: 30px;">
+    <h2 style="margin-bottom: 20px; color: #2c3e50;">Countdown</h2>
+    <div id="countdown" style="font-size: 2.5em; font-weight: bold; color: #e74c3c; margin: 20px 0;">
+        00:00:00
+    </div>
+    <p style="color: #666; margin-bottom: 20px;">Time remaining</p>
+    <div>
+        <label>Target date: <input type="datetime-local" id="target"></label>
+        <button onclick="startCountdown()" style="padding: 8px 16px; margin-left: 10px;">Start</button>
+    </div>
+</div>
+<script>
+let targetDate = new Date();
+targetDate.setDate(targetDate.getDate() + 7); // Default: 1 week from now
+
+document.getElementById('target').value = targetDate.toISOString().slice(0,16);
+
+function startCountdown() {{
+    const input = document.getElementById('target').value;
+    if (input) targetDate = new Date(input);
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+}}
+
+function updateCountdown() {{
+    const now = new Date();
+    const diff = targetDate - now;
+    if (diff <= 0) {{
+        document.getElementById('countdown').innerHTML = "Time's up!";
+        return;
+    }}
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    document.getElementById('countdown').innerHTML = 
+        String(hours).padStart(2,'0') + ':' +
+        String(minutes).padStart(2,'0') + ':' +
+        String(seconds).padStart(2,'0');
+}}
+</script>
+    </div>
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="/">← All widgets</a>
+    </div>
+</body>
+</html>
