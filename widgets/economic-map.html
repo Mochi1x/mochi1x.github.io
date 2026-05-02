@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Economic Map Widget</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            background: #0d1117;
+            min-height: 100vh;
+        }
+        a { color: #0366d6; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #8b949e; }
+        .widget-wrapper {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .description {
+            color: #8b949e;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        footer {
+            text-align: center;
+            color: #8b949e;
+            margin-top: 30px;
+            font-size: 0.85em;
+        }
+        /* Economic map should fill the container */
+        tv-economic-map {
+            display: block;
+            width: 100%;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to all widgets</a>
+        
+        <div class="widget-wrapper">
+            <h1 style="color: #f0f6fc; margin-bottom: 10px;">🌍 Economic Map</h1>
+            <p class="description">
+                Interactive world map showing key economic indicators by country.
+                Visualize GDP, inflation, unemployment, and other macroeconomic data.
+            </p>
+            
+            <!-- TradingView Economic Map Widget BEGIN -->
+            <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-economic-map.js"></script>
+            <tv-economic-map></tv-economic-map>
+            <!-- TradingView Economic Map Widget END -->
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="/">← All widgets</a>
+        </div>
+
+        <footer>
+            <p>Widget powered by <a href="https://tradingview.com" target="_blank">TradingView</a></p>
+        </footer>
+    </div>
+</body>
+</html>
