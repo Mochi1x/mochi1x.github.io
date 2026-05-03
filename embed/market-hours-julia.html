@@ -80,13 +80,43 @@
   .card {
     background: var(--card-bg) !important;
     border: 1px solid var(--card-border) !important;
-    border-radius: 14px;
-    padding: 12px 14px;
-    box-shadow: none !important;
+    border-radius: 16px;
+    padding: 14px 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.05);
     display: block;
     text-decoration: none;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.25s ease,
+                border-color 0.2s ease;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Glossy reflection effect */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 100%);
+    pointer-events: none;
+    border-radius: 16px 16px 0 0;
+  }
+
+  /* Hover: scale up + glow */
+  .card:hover {
+    transform: scale(1.03) translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.2),
+                0 0 0 1px rgba(255,255,255,0.1),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+    border-color: rgba(128,128,128,0.3);
+    z-index: 1;
+  }
+
+  .card:hover .card-name {
+    color: var(--accent) !important;
   }
   .card-header {
     display: flex;
