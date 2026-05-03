@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Hours - Embed (Proxy)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: transparent;
+        }
+        #widget {
+            width: 100%;
+            min-height: 500px;
+            border-radius: 16px;
+        }
+        .error {
+            color: #ff6b6b;
+            font-family: sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="widget">
+        <div class="error">Loading market hours widget...</div>
+    </div>
+
+    <script>
+        // CORS proxy to bypass X-Frame-Options
+        // Using corsproxy.io as a free public proxy
+        const WIDGET_URL = 'https://xauusdjulia.com/forex-market-hours/widget';
+        const PROXY_URL = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(WIDGET_URL);
+        
+        // Alternative: try corsproxy.io if allorigins fails
+        // const PROXY_URL = 'https://corsproxy.io/?' + encodeURIComponent(WIDGET_URL);
+        
+        fetch(PROXY_URL)
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.text();
+            })
+            .then(html => {
+                // Inject the fetched HTML directly into the container
+                // This bypasses iframe X-Frame-Options because we're loading it as same-origin
+                document.getElementById('widget').innerHTML = html;
+            })
+            .catch(err => {
+                console.error('Failed to load widget:', err);
+                document.getElementById('widget').innerHTML = 
+                    '<div class="error">⚠️ Could not load widget.<br>It may be blocked by the source.<br><a href="' + WIDGET_URL + '" target="_blank">Open directly</a></div>';
+            });
+    </script>
+</body>
+</html>
