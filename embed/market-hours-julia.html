@@ -253,14 +253,25 @@
       const now = new Date();
       const h = now.getUTCHours();
       const day = now.getUTCDay(); // 0=Sun, 6=Sat
-      
-      // Markets closed on weekends
-      if (day === 0 || day === 6) {
+
+      // Weekly schedule: open Mon 00:00 UTC – Fri 22:00 UTC
+      // Closed all day Saturday (6)
+      if (day === 6) {
+        updateBadge(false);
+        return;
+      }
+      // Sunday: only open after Sydney opens at 22:00 UTC
+      if (day === 0 && h < 22) {
+        updateBadge(false);
+        return;
+      }
+      // Friday: closes when NY session ends at 22:00 UTC
+      if (day === 5 && h >= 22) {
         updateBadge(false);
         return;
       }
 
-      // Also closed if all sessions are outside their hours
+      // Regular hours: check if any session is currently open
       const anyOpen = sessions.some(s => isSessionOpen(s.start, s.end, h));
       updateBadge(anyOpen);
     }
