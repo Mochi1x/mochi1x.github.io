@@ -77,13 +77,15 @@
           .replace(/padding:\s*20px/g, 'padding: 16px')
           .replace(/font-family:[^;]+;/g, 'font-family: -apple-system, BlinkMacSystemFont, sans-serif;');
 
-        // Remove the "Powered by" footer link (optional – keeps embed clean)
-        const links = widget.querySelectorAll('a');
-        links.forEach(a => {
-          if (a.href.includes('xauusdjulia.com/forex-market-hours') || a.textContent.includes('Julia Scalper EA')) {
-            a.parentElement.style.display = 'none';
-          }
-        });
+        // Remove the "Powered by" footer div
+        const footerText = Array.from(widget.querySelectorAll('*')).find(el =>
+          el.textContent && el.textContent.includes('Powered by') && el.textContent.includes('Julia Scalper')
+        );
+        if (footerText) {
+          // Find the containing div (the footer element)
+          const footerDiv = footerText.closest('div[style*="text-align: center"]') || footerText.parentElement;
+          if (footerDiv) footerDiv.style.display = 'none';
+        }
 
         // Inject cleaned widget
         const container = document.getElementById('widget-container');
