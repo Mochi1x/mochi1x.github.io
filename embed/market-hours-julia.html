@@ -252,6 +252,15 @@
     function updateStatus() {
       const now = new Date();
       const h = now.getUTCHours();
+      const day = now.getUTCDay(); // 0=Sun, 6=Sat
+      
+      // Markets closed on weekends
+      if (day === 0 || day === 6) {
+        updateBadge(false);
+        return;
+      }
+
+      // Also closed if all sessions are outside their hours
       const anyOpen = sessions.some(s => isSessionOpen(s.start, s.end, h));
       updateBadge(anyOpen);
     }
