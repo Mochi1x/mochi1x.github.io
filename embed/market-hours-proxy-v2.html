@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Market Hours Widget – Embed</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* Prevent any page-level scrolling */
+    html, body {
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+      background: #0a0a0f;
+    }
+
+    #widget-container {
+      width: 100%;
+      /* Auto-height via JS */
+    }
+
+    /* Loading state */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 300px;
+      color: #666;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+    }
+
+    .error {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+      color: #ef4444;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      padding: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="widget-container">
+    <div class="loading">Loading Market Hours widget…</div>
+  </div>
+
+  <script>
+    // AllOrigins CORS proxy
+    const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://xauusdjulia.com/forex-market-hours/widget');
+
+    fetch(proxyUrl)
+      .then(r => {
+        if (!r.ok) throw new Error('Network response was not ok');
+        return r.json();
+      })
+      .then(data => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(data.contents, 'text/html');
+
+        // Find the main widget div – it has inline styles with 100vh
+        const rawWidget = doc.querySelector('div[style*="min-height: 100vh"]');
+        if (!rawWidget) throw new Error('Widget container not found');
+
+        // Clone to avoid modifying original
+        const widget = rawWidget.cloneNode(true);
+
+        // Clean up problematic styles
+        widget.style.cssText = widget.style.cssText
+          .replace(/min-height:\s*100vh/g, 'min-height: auto')
+          .replace(/height:\s*100vh/g, 'height: auto')
+          .replace(/padding:\s*20px/g, 'padding: 16px')
+          .replace(/font-family:[^;]+;/g, 'font-family: -apple-system, BlinkMacSystemFont, sans-serif;');
+
+        // Remove the "Powered by" footer link (optional – keeps embed clean)
+        const links = widget.querySelectorAll('a');
+        links.forEach(a => {
+          if (a.href.includes('xauusdjulia.com/forex-market-hours') || a.textContent.includes('Julia Scalper EA')) {
+            a.parentElement.style.display = 'none';
+          }
+        });
+
+        // Inject cleaned widget
+        const container = document.getElementById('widget-container');
+        container.innerHTML = '';
+        container.appendChild(widget);
+
+        // Auto-resize iframe to fit content (for Notion embeds)
+        setTimeout(() => {
+          const height = widget.scrollHeight;
+          // Send height to parent (if in iframe)
+          if (window.parent !== window) {
+            window.parent.postMessage({ type: 'widget-height', height: height + 32 }, '*');
+          }
+          console.log('Widget loaded – content height:', height + 'px');
+        }, 500);
+      })
+      .catch(err => {
+        console.error('Failed to load widget:', err);
+        document.getElementById('widget-container').innerHTML =
+          '<div class="error">⚠️ Failed to load widget.<br>Proxy or source unavailable.<br><br>Try: <a href="https://xauusdjulia.com/forex-market-hours/widget" target="_blank" style="color:#ffaa00">Open directly</a></div>';
+      });
+  </script>
+</body>
+</html>
