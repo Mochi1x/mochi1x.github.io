@@ -1,0 +1,420 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forex Market Hours - Mochi1x Widgets</title>
+  <style>
+    :root {
+      --open: #00ff88;
+      --closed: #333;
+      --transition: #ffdd00;
+      --bg-dark: #0d0d0d;
+      --card-bg: #1a1a1a;
+      --text: #ffffff;
+      --text-muted: #888;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 700px;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      text-align: center;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .session {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .session:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+
+    .session-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .session-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .session-city {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--closed);
+    }
+
+    .status-dot.open {
+      background: var(--open);
+      box-shadow: 0 0 8px var(--open);
+    }
+
+    .status-dot.transition {
+      background: var(--transition);
+      box-shadow: 0 0 8px var(--transition);
+    }
+
+    .times {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .status-open { color: var(--open); }
+    .status-closed { color: var(--text-muted); }
+    .status-transition { color: var(--transition); }
+
+    .progress-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: var(--open);
+      transition: width 0.5s linear;
+    }
+
+    .progress-bar.closed { background: var(--closed); }
+    .progress-bar.transition { background: var(--transition); }
+
+    .summary {
+      background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid #2a2a2a;
+    }
+
+    .summary-status {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+
+    .summary-status span {
+      font-weight: 600;
+    }
+
+    .countdown {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .countdown strong {
+      color: var(--text);
+    }
+
+    .overall-open { color: var(--open); }
+    .overall-closed { color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Forex Market Hours</h1>
+
+    <div class="grid">
+      <!-- Sydney -->
+      <div class="session" data-session="sydney" id="session-sydney">
+        <div class="session-header">
+          <div>
+            <div class="session-name">Sydney</div>
+            <div class="session-city">AEST (UTC+10)</div>
+          </div>
+          <div class="status" id="status-sydney">
+            <div class="status-dot"></div>
+            <span class="status-text">Closed</span>
+          </div>
+        </div>
+        <div class="times">5:00 PM — 2:00 AM AEST<br>(06:00 — 01:00 UTC)</div>
+        <div class="progress-bar" style="width: 0%"></div>
+      </div>
+
+      <!-- Tokyo -->
+      <div class="session" data-session="tokyo" id="session-tokyo">
+        <div class="session-header">
+          <div>
+            <div class="session-name">Tokyo</div>
+            <div class="session-city">JST (UTC+9)</div>
+          </div>
+          <div class="status" id="status-tokyo">
+            <div class="status-dot"></div>
+            <span class="status-text">Closed</span>
+          </div>
+        </div>
+        <div class="times">7:00 PM — 4:00 AM JST<br>(06:00 — 01:00 UTC)</div>
+        <div class="progress-bar" style="width: 0%"></div>
+      </div>
+
+      <!-- London -->
+      <div class="session" data-session="london" id="session-london">
+        <div class="session-header">
+          <div>
+            <div class="session-name">London</div>
+            <div class="session-city">GMT / BST</div>
+          </div>
+          <div class="status" id="status-london">
+            <div class="status-dot"></div>
+            <span class="status-text">Closed</span>
+          </div>
+        </div>
+        <div class="times">8:00 AM — 5:00 PM GMT<br>(08:00 — 17:00 UTC)</div>
+        <div class="progress-bar" style="width: 0%"></div>
+      </div>
+
+      <!-- New York -->
+      <div class="session" data-session="ny" id="session-ny">
+        <div class="session-header">
+          <div>
+            <div class="session-name">New York</div>
+            <div class="session-city">EST / EDT</div>
+          </div>
+          <div class="status" id="status-ny">
+            <div class="status-dot"></div>
+            <span class="status-text">Closed</span>
+          </div>
+        </div>
+        <div class="times">8:00 AM — 5:00 PM EST<br>(13:00 — 22:00 UTC)</div>
+        <div class="progress-bar" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div class="summary">
+      <div class="summary-status" id="overall-status">
+        <span class="overall-closed">All Markets Closed</span>
+      </div>
+      <div class="countdown" id="countdown">
+        Next opens in —:—:—
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sessions = {
+      sydney: {
+        startUTC: 6,   // 06:00 UTC
+        endUTC: 1,     // 01:00 UTC (next day)
+        tzOffset: 10   // UTC+10
+      },
+      tokyo: {
+        startUTC: 6,   // 06:00 UTC
+        endUTC: 1,     // 01:00 UTC (next day)
+        tzOffset: 9    // UTC+9
+      },
+      london: {
+        startUTC: 8,   // 08:00 UTC
+        endUTC: 17,    // 17:00 UTC
+        tzOffset: 0    // UTC+0 (or +1 BST)
+      },
+      ny: {
+        startUTC: 13,  // 13:00 UTC
+        endUTC: 22,    // 22:00 UTC
+        tzOffset: -5   // UTC-5 (or -4 EDT)
+      }
+    };
+
+    function getHoursMinutes(date) {
+      return { hours: date.getUTCHours(), minutes: date.getUTCMinutes() };
+    }
+
+    function totalMinutes(h, m) {
+      return h * 60 + m;
+    }
+
+    function getNextTransition(currentMinutes, start, end) {
+      if (currentMinutes >= start && currentMinutes < end) {
+        return { type: 'end', minutes: end };
+      }
+      return { type: 'start', minutes: start };
+    }
+
+    function updateSession(name, config, nowMins) {
+      const { startUTC, endUTC } = config;
+      const startMins = totalMinutes(startUTC, 0);
+      const endMins = totalMinutes(endUTC, 0);
+
+      let isOpen = false;
+      let isTransition = false;
+      let progress = 0;
+      let totalDuration = 0;
+      let currentInSession = 0;
+
+      // Check if now is within session (handle overnight sessions)
+      if (startUTC < endUTC) {
+        // Same-day session (London, NY)
+        isOpen = nowMins >= startMins && nowMins < endMins;
+        currentInSession = isOpen ? nowMins - startMins : 0;
+        totalDuration = endMins - startMins;
+      } else {
+        // Overnight session (Sydney, Tokyo)
+        isOpen = nowMins >= startMins || nowMins < endMins;
+        if (isOpen) {
+          currentInSession = nowMins >= startMins ? nowMins - startMins : totalMinutes(24,0) - startMins + nowMins;
+          totalDuration = (totalMinutes(24,0) - startMins) + endMins;
+        }
+      }
+
+      if (isOpen) {
+        progress = (currentInSession / totalDuration) * 100;
+      }
+
+      // Determine status and transition indicator
+      let statusClass = 'closed';
+      let statusText = 'Closed';
+      let dotClass = '';
+      let barClass = 'closed';
+
+      const next = getNextTransition(nowMins, startMins, endMins);
+      const minsToTransition = next.minutes - nowMins;
+      if (minsToTransition < 0) minsToTransition += totalMinutes(24, 0);
+
+      // Within 5 minutes of opening/closing?
+      if (minsToTransition <= 5) {
+        isTransition = true;
+        statusClass = 'transition';
+        statusText = next.type === 'start' ? `Opening in ${minsToTransition}m` : `Closing in ${minsToTransition}m`;
+        dotClass = 'transition';
+        barClass = 'transition';
+      } else if (isOpen) {
+        statusClass = 'open';
+        statusText = 'Open';
+        dotClass = 'open';
+        barClass = '';
+      }
+
+      // Update DOM
+      const el = document.getElementById('session-' + name);
+      const statusEl = el.querySelector('.status');
+      const textEl = statusEl.querySelector('.status-text');
+      const dotEl = statusEl.querySelector('.status-dot');
+      const barEl = el.querySelector('.progress-bar');
+
+      textEl.textContent = statusText;
+      textEl.className = 'status-text status-' + statusClass;
+      dotEl.className = 'status-dot ' + dotClass;
+      barEl.className = 'progress-bar ' + barClass;
+      barEl.style.width = progress + '%';
+    }
+
+    function updateSummary(allOpen, nextSession, countdown) {
+      const overallEl = document.getElementById('overall-status');
+      const countdownEl = document.getElementById('countdown');
+
+      if (allOpen.length > 0) {
+        const openList = allOpen.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(', ');
+        overallEl.innerHTML = `<span class="overall-open">${openList} Open${allOpen.length > 1 ? ' now' : ''}</span>`;
+      } else {
+        overallEl.innerHTML = `<span class="overall-closed">All Markets Closed</span>`;
+      }
+
+      if (nextSession && countdown) {
+        const h = String(Math.floor(countdown / 3600)).padStart(2, '0');
+        const m = String(Math.floor((countdown % 3600) / 60)).padStart(2, '0');
+        const s = String(countdown % 60).padStart(2, '0');
+        countdownEl.innerHTML = `Next opens in <strong>${h}:${m}:${s}</strong> (${nextSession})`;
+      }
+    }
+
+    function calculateCountdown(now) {
+      const nowMins = totalMinutes(now.getUTCHours(), now.getUTCMinutes());
+
+      let earliestOpen = Infinity;
+      let nextSessionName = null;
+
+      for (const [name, config] of Object.entries(sessions)) {
+        const startMins = totalMinutes(config.startUTC, 0);
+        let minsUntil = startMins - nowMins;
+        if (minsUntil < 0) minsUntil += totalMinutes(24, 0);
+
+        if (minsUntil < earliestOpen) {
+          earliestOpen = minsUntil;
+          nextSessionName = name;
+        }
+      }
+
+      return earliestOpen * 60, nextSessionName;
+    }
+
+    function update() {
+      const now = new Date();
+      const nowMins = totalMinutes(now.getUTCHours(), now.getUTCMinutes());
+
+      const openSessions = [];
+
+      for (const [name, config] of Object.entries(sessions)) {
+        updateSession(name, config, nowMins);
+
+        const { startUTC, endUTC } = config;
+        const startMins = totalMinutes(startUTC, 0);
+        const endMins = totalMinutes(endUTC, 0);
+
+        if (startUTC < endUTC) {
+          if (nowMins >= startMins && nowMins < endMins) openSessions.push(name);
+        } else {
+          if (nowMins >= startMins || nowMins < endMins) openSessions.push(name);
+        }
+      }
+
+      const [countdownSecs, nextSession] = calculateCountdown(now);
+      updateSummary(openSessions, nextSession, countdownSecs);
+    }
+
+    // Initial update
+    update();
+    // Update every second
+    setInterval(update, 1000);
+  </script>
+</body>
+</html>

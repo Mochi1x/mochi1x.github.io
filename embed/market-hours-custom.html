@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Market Hours Widget</title>
+  <style>
+    :root {
+      --open: #00ff88;
+      --closed: #333;
+      --transition: #ffdd00;
+      --bg: #0d0d0d;
+      --card: #1a1a1a;
+      --text: #fff;
+      --muted: #666;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 16px;
+      min-height: 400px;
+    }
+
+    .wrap {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .sess {
+      background: var(--card);
+      border-radius: 6px;
+      padding: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+
+    .n { font-size: 0.9rem; font-weight: 600; }
+    .c { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+
+    .st {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--closed);
+    }
+
+    .dot.o { background: var(--open); box-shadow: 0 0 6px var(--open); }
+    .dot.t { background: var(--transition); box-shadow: 0 0 6px var(--transition); }
+
+    .times {
+      font-size: 0.65rem;
+      color: var(--muted);
+    }
+
+    .bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      background: var(--closed);
+      transition: width 0.5s, background 0.3s;
+    }
+
+    .bar.o { background: var(--open); }
+    .bar.t { background: var(--transition); }
+
+    .sum {
+      background: #1a1a1a;
+      border-radius: 6px;
+      padding: 14px;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+
+    .sum .stat { font-weight: 600; margin-bottom: 4px; }
+    .sum .cd { color: var(--muted); font-size: 0.75rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Forex Market Hours</h1>
+
+    <div class="grid">
+      <div class="sess" id="s-syd">
+        <div class="top">
+          <div>
+            <div class="n">Sydney</div>
+            <div class="c">AEST</div>
+          </div>
+          <div class="st" id="st-syd"><div class="dot"></div><span>Closed</span></div>
+        </div>
+        <div class="times">5 PM – 2 AM</div>
+        <div class="bar" style="width:0%"></div>
+      </div>
+
+      <div class="sess" id="s-tok">
+        <div class="top">
+          <div>
+            <div class="n">Tokyo</div>
+            <div class="c">JST</div>
+          </div>
+          <div class="st" id="st-tok"><div class="dot"></div><span>Closed</span></div>
+        </div>
+        <div class="times">7 PM – 4 AM</div>
+        <div class="bar" style="width:0%"></div>
+      </div>
+
+      <div class="sess" id="s-lon">
+        <div class="top">
+          <div>
+            <div class="n">London</div>
+            <div class="c">GMT</div>
+          </div>
+          <div class="st" id="st-lon"><div class="dot"></div><span>Closed</span></div>
+        </div>
+        <div class="times">8 AM – 5 PM</div>
+        <div class="bar" style="width:0%"></div>
+      </div>
+
+      <div class="sess" id="s-ny">
+        <div class="top">
+          <div>
+            <div class="n">New York</div>
+            <div class="c">EST</div>
+          </div>
+          <div class="st" id="st-ny"><div class="dot"></div><span>Closed</span></div>
+        </div>
+        <div class="times">8 AM – 5 PM</div>
+        <div class="bar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="sum">
+      <div class="stat" id="ov">All Markets Closed</div>
+      <div class="cd" id="cd">Next opens in —:—:—</div>
+    </div>
+  </div>
+
+  <script>
+    const sess = {
+      syd: { s: 6, e: 1 },
+      tok: { s: 6, e: 1 },
+      lon: { s: 8, e: 17 },
+      ny:  { s: 13, e: 22 }
+    };
+
+    function mins(h, m) { return h * 60 + m; }
+
+    function upd() {
+      const n = new Date();
+      const h = n.getUTCHours();
+      const m = n.getUTCMinutes();
+      const now = mins(h, m);
+      const open = [];
+
+      for (const [k, v] of Object.entries(sess)) {
+        const el = document.getElementById('s-' + k);
+        const stEl = document.getElementById('st-' + k);
+        const dot = stEl.querySelector('.dot');
+        const txt = stEl.querySelector('span');
+        const bar = el.querySelector('.bar');
+
+        const sM = mins(v.s, 0);
+        const eM = mins(v.e, 0);
+        const isOvernight = v.s > v.e;
+        let isOpen = false;
+        let prog = 0;
+        let dur = 0;
+
+        if (isOvernight) {
+          isOpen = now >= sM || now < eM;
+          if (isOpen) {
+            prog = now >= sM ? now - sM : (1440 - sM) + now;
+            dur = (1440 - sM) + eM;
+          }
+        } else {
+          isOpen = now >= sM && now < eM;
+          prog = isOpen ? now - sM : 0;
+          dur = eM - sM;
+        }
+
+        if (isOpen) open.push(k);
+        const pct = prog / dur * 100;
+
+        // Status
+        let status = 'closed';
+        let state = 'c';
+        bar.classList.remove('o','t','c');
+
+        if (isOpen) {
+          status = 'Open';
+          state = 'o';
+          bar.classList.add('o');
+          bar.style.width = pct + '%';
+        } else {
+          bar.classList.add('c');
+          // check 5-min warning
+        }
+
+        dot.className = 'dot ' + state;
+        txt.textContent = status;
+        stEl.className = 'st ' + (isOpen ? 'status-open' : 'status-closed');
+      }
+
+      // Overall
+      const ov = document.getElementById('ov');
+      const cd = document.getElementById('cd');
+
+      if (open.length) {
+        const names = open.map(x => x === 'syd' ? 'Sydney' : x === 'tok' ? 'Tokyo' : x === 'lon' ? 'London' : 'New York').join(', ');
+        ov.innerHTML = '<span style="color:#00ff88">' + names + ' Open</span>';
+      } else {
+        ov.innerHTML = '<span style="color:#666">All Markets Closed</span>';
+      }
+
+      // Countdown
+      let next = Infinity;
+      let nextName = '';
+      for (const [k, v] of Object.entries(sess)) {
+        const sM = mins(v.s, 0);
+        let diff = sM - now;
+        if (diff < 0) diff += 1440;
+        if (diff < next) {
+          next = diff;
+          nextName = k;
+        }
+      }
+
+      const hh = String(Math.floor(next / 60)).padStart(2,'0');
+      const mm = String(next % 60).padStart(2,'0');
+
+      const nMap = { syd: 'Sydney', tok: 'Tokyo', lon: 'London', ny: 'New York' };
+      cd.innerHTML = `Next opens in <strong>${hh}:${mm}</strong> (${nMap[nextName]})`;
+    }
+
+    upd();
+    setInterval(upd, 1000);
+  </script>
+</body>
+</html>
