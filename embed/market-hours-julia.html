@@ -1,0 +1,272 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forex Market Hours</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --card-bg: #18181b;
+    --card-border: #27272a;
+    --text-main: #e4e4e7;
+    --text-muted: #71717a;
+    --accent: #f59e0b;
+    --accent-light: rgba(245, 158, 11, 0.1);
+    --closed-bg: rgba(239, 68, 68, 0.1);
+    --closed-border: rgba(239, 68, 68, 0.3);
+    --closed-text: #f87171;
+    --closed-dot: #f87171;
+    --open-bg: rgba(34, 197, 94, 0.1);
+    --open-border: rgba(34, 197, 94, 0.3);
+    --open-text: #4ade80;
+    --open-dot: #4ade80;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: auto; /* not 100vh in embed */
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  .wrap {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px 16px 12px;
+  }
+
+  /* Status badge */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    border: 1px solid;
+  }
+  .badge.closed {
+    background: var(--closed-bg);
+    border-color: var(--closed-border);
+    color: var(--closed-text);
+  }
+  .badge.open {
+    background: var(--open-bg);
+    border-color: var(--open-border);
+    color: var(--open-text);
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+  .badge.closed .dot { background: var(--closed-dot); }
+  .badge.open .dot { background: var(--open-dot); box-shadow: 0 0 8px var(--open-dot); }
+
+  /* Clocks */
+  .clocks {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 20px;
+  }
+  .clock {
+    text-align: center;
+  }
+  .clock .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .clock .time {
+    font-size: 28px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: -0.5px;
+  }
+  .clock.local .time { color: var(--accent); }
+  .clock.utc .time { color: #fff; }
+
+  /* Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 0;
+  }
+
+  /* Card */
+  .card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 14px;
+    padding: 12px 14px;
+    box-shadow: none;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .card-name {
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-times {
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 360px) {
+    .wrap { padding: 16px 12px; }
+    .clocks { gap: 24px; }
+    .clock .time { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="badge" class="badge closed">
+    <span class="dot"></span>
+    <span class="text">Market Closed</span>
+  </div>
+
+  <div class="clocks">
+    <div class="clock local">
+      <div class="label">Your Time</div>
+      <div class="time" id="local-time">--:--:-- --</div>
+    </div>
+    <div class="clock utc">
+      <div class="label">UTC</div>
+      <div class="time" id="utc-time">--:--:--</div>
+    </div>
+  </div>
+
+  <div class="grid" id="grid">
+    <!-- Populated by JS -->
+  </div>
+</div>
+
+<script>
+  (function() {
+    // Session definitions in UTC hours (0-23)
+    const sessions = [
+      { id: 'sydney', name: 'Sydney', flag: '🇦🇺', start: 22, end: 7 },
+      { id: 'tokyo',  name: 'Tokyo',  flag: '🇯🇵', start: 0,  end: 9 },
+      { id: 'london', name: 'London', flag: '🇬🇧', start: 8,  end: 17 },
+      { id: 'ny',     name: 'New York', flag: '🇺🇸', start: 13, end: 22 }
+    ];
+
+    function pad2(n) { return n.toString().padStart(2, '0'); }
+    function format12h(h, m, s) {
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      let h12 = h % 12;
+      if (h12 === 0) h12 = 12;
+      return `${pad2(h12)}:${pad2(m)}:${pad2(s)} ${ampm}`;
+    }
+    function format24h(h, m, s) {
+      return `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
+    }
+    // Convert UTC hour to local hour string (12h) with minutes :00
+    function localTimeRange(utcStart, utcEnd, tzOffset) {
+      // tzOffset in hours: e.g. -5 for EST, +9 for JST
+      const toLocal = (h) => (h + tzOffset + 24) % 24;
+      const ls = toLocal(utcStart);
+      const le = toLocal(utcEnd);
+      const fmt = (h) => {
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = (h % 12) === 0 ? 12 : (h % 12);
+        return `${h12}:00 ${ampm}`;
+      };
+      // Note: If session spans midnight, it's fine
+      return `${fmt(ls)} — ${fmt(le)}`;
+    }
+
+    function buildGrid(tzOffset) {
+      const grid = document.getElementById('grid');
+      grid.innerHTML = sessions.map(s => {
+        const times = localTimeRange(s.start, s.end, tzOffset);
+        return `
+          <div class="card">
+            <div class="card-header">
+              <span class="card-name">${s.flag} ${s.name}</span>
+            </div>
+            <div class="card-times">${times}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function isSessionOpen(start, end, nowUtcHour) {
+      if (start < end) {
+        return nowUtcHour >= start && nowUtcHour < end;
+      } else { // overnight
+        return nowUtcHour >= start || nowUtcHour < end;
+      }
+    }
+
+    function updateBadge(anyOpen) {
+      const badge = document.getElementById('badge');
+      const txt = badge.querySelector('.text');
+      if (anyOpen) {
+        badge.className = 'badge open';
+        txt.textContent = 'Market Open';
+      } else {
+        badge.className = 'badge closed';
+        txt.textContent = 'Market Closed';
+      }
+    }
+
+    function updateClocks() {
+      const now = new Date();
+      const localH = now.getHours();
+      const localM = now.getMinutes();
+      const localS = now.getSeconds();
+      const utcH = now.getUTCHours();
+      const utcM = now.getUTCMinutes();
+      const utcS = now.getUTCSeconds();
+
+      document.getElementById('local-time').textContent = format12h(localH, localM, localS);
+      document.getElementById('utc-time').textContent = format24h(utcH, utcM, utcS);
+    }
+
+    function updateStatus() {
+      const now = new Date();
+      const h = now.getUTCHours();
+      const anyOpen = sessions.some(s => isSessionOpen(s.start, s.end, h));
+      updateBadge(anyOpen);
+    }
+
+    function tick() {
+      updateClocks();
+      updateStatus();
+    }
+
+    // Init
+    const tzOffset = -new Date().getTimezoneOffset() / 60; // e.g., -5 for EST
+    buildGrid(tzOffset);
+    tick();
+    setInterval(tick, 1000);
+  })();
+</script>
+</body>
+</html>
