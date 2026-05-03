@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apple Music — 13th Reason (Proxy Embed)</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --card-bg: rgba(24, 24, 27, 0.6);
+      --card-border: rgba(63, 63, 70, 0.5);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      background: var(--bg) !important;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 12px;
+      background: var(--bg) !important;
+    }
+
+    .card {
+      background: var(--card-bg) !important;
+      border: 1px solid var(--card-border) !important;
+      border-radius: 16px;
+      overflow: hidden;
+      backdrop-filter: blur(12px) saturate(180%);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.05);
+      height: 100%;
+    }
+
+    #widget-container {
+      width: 100%;
+      height: 100%;
+      min-height: 150px;
+    }
+
+    #widget-container iframe {
+      width: 100% !important;
+      height: 100% !important;
+      border: 0;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 150px;
+      color: #888;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div id="widget-container">
+        <div class="loading">Loading Apple Music widget…</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const targetUrl = 'https://embed.music.apple.com/us/album/13th-reason/1873421961?i=1873421963';
+      const container = document.getElementById('widget-container');
+
+      // Use allorigins.win as CORS proxy
+      const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(targetUrl);
+
+      fetch(proxyUrl)
+        .then(r => r.text())
+        .then(html => {
+          // Strip any unwanted attributes from the iframe
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+
+          // Find the iframe in the fetched HTML
+          const iframe = doc.querySelector('iframe');
+          if (iframe) {
+            // Remove sandbox restrictions that might interfere
+            iframe.removeAttribute('sandbox');
+            iframe.setAttribute('allow', 'autoplay *; encrypted-media *; fullscreen');
+
+            // Inject into our container
+            container.innerHTML = '';
+            container.appendChild(iframe);
+
+            // Auto-resize parent window for Notion
+            setTimeout(() => {
+              const height = document.body.scrollHeight;
+              window.parent.postMessage({ type: 'setHeight', height: height }, '*');
+            }, 1000);
+          } else {
+            container.innerHTML = '<div class="loading">Widget failed to load</div>';
+          }
+        })
+        .catch(err => {
+          console.error('Proxy fetch failed:', err);
+          container.innerHTML = '<div class="loading">Failed to load — ' + err.message + '</div>';
+        });
+    })();
+  </script>
+</body>
+</html>
