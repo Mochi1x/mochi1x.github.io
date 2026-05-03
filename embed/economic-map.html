@@ -14,6 +14,22 @@
             padding: 0;
             margin: 0;
         }
+        /* Hide TradingView attribution footer */
+        .tradingview-widget-container__footer,
+        .tradingview-widget-footer,
+        .tv-widget-footer,
+        [class*="footer"],
+        .tradingview-widget-container a[href*="world-bank"],
+        .tradingview-widget-container a[href*="worldeconomics"] {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            min-height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+        }
+
         /* Ensure widget fills screen */
         tv-economic-map {
             width: 100% !important;
