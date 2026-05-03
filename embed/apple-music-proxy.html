@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Apple Music — 13th Reason (Proxy Embed)</title>
+  <title>Apple Music — 13th Reason (Proxy Embed v3)</title>
   <style>
     :root { --bg: #0a0a0f; --card-bg: rgba(24,24,27,0.6); --card-border: rgba(63,63,70,0.5); }
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -40,7 +40,6 @@
       const targetUrl = 'https://embed.music.apple.com/us/album/13th-reason/1873421961?i=1873421963';
       const container = document.getElementById('widget-container');
 
-      // Prioritized list of working CORS proxies
       const proxies = [
         'https://api.codetabs.com/v1/proxy?quest=',
         'https://api.allorigins.win/raw?url=',
@@ -48,70 +47,59 @@
       ];
 
       function rewriteUrls(html) {
-        // Replace relative src/href to absolute on embed.music.apple.com
         return html.replace(/(src|href)=["'](\/[^"'>]+)["']/g, (m, attr, path) => {
           if (path.startsWith('//')) return m;
-          const abs = 'https://embed.music.apple.com' + path;
-          return attr + '="' + abs + '"';
+          return attr + '="https://embed.music.apple.com' + path + '"';
         });
       }
 
-      function loadWithTimeout(url, timeout = 6000) {
+      function loadWithTimeout(url, ms = 6000) {
         return new Promise((resolve, reject) => {
-          const controller = new AbortController();
+          const ctrl = new AbortController();
           const timer = setTimeout(() => {
-            controller.abort();
-            reject(new Error('Timeout'));
-          }, timeout);
-          fetch(url, { signal: controller.signal, mode: 'cors' })
+            ctrl.abort(); reject(new Error('Timeout'));
+          }, ms);
+          fetch(url, { signal: ctrl.signal })
             .then(r => {
               clearTimeout(timer);
               if (!r.ok) throw new Error('HTTP ' + r.status);
               return r.text();
             })
             .then(resolve)
-            .catch(err => {
-              clearTimeout(timer);
-              reject(err);
+            .catch(e => {
+              clearTimeout(timer); reject(e);
             });
         });
       }
 
-      function tryProxy(idx) {
-        if (idx >= proxies.length) {
-          container.innerHTML = '<div class="error">❌ All proxies failed. Apple Music blocks embedding.</div>';
+      function tryProxy(i) {
+        if (i >= proxies.length) {
+          container.innerHTML = '<div class="error">❌ All proxies failed.</div>';
           return;
         }
-        const url = proxies[idx] + encodeURIComponent(targetUrl);
-        console.log('Trying proxy #' + (idx+1) + ':', proxies[idx]);
+        const url = proxies[i] + encodeURIComponent(targetUrl);
+        console.log('Attempt', i+1, '→', proxies[i]);
 
-        loadWithTimeout(url, 6000)
-          .then(rawHtml => {
-            console.log('Fetched', rawHtml.length, 'bytes from proxy');
-            const fixedHtml = rewriteUrls(rawHtml);
-            // Quick sanity check
-            if (!fixedHtml.includes('<embed-root')) {
-              console.warn('Response missing <embed-root>, trying next proxy');
-              throw new Error('Invalid response');
-            }
-            // Inject via iframe blob to isolate CSS/JS
-            const blob = new Blob([fixedHtml], {type: 'text/html'});
-            const blobUrl = URL.createObjectURL(blob);
+        loadWithTimeout(url)
+          .then(raw => {
+            console.log('Fetched', raw.length, 'bytes');
+            const html = rewriteUrls(raw);
+            if (!html.includes('<embed-root')) throw new Error('Not Apple embed HTML');
+            // Inject using srcdoc — keeps same-origin, no blob issues
             const iframe = document.createElement('iframe');
-            iframe.src = blobUrl;
+            iframe.sandbox = 'allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation';
             iframe.setAttribute('allow', 'autoplay *; encrypted-media *; fullscreen');
-            iframe.setAttribute('sandbox', 'allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation');
+            iframe.srcdoc = html;
             container.innerHTML = '';
             container.appendChild(iframe);
-            // Auto-resize for Notion
             setTimeout(() => {
               const h = document.body.scrollHeight;
               window.parent.postMessage({type: 'setHeight', height: h}, '*');
             }, 2500);
           })
           .catch(err => {
-            console.error('Proxy failed:', err.message || err);
-            tryProxy(idx + 1);
+            console.error('Proxy', i, 'failed:', err.message || err);
+            tryProxy(i+1);
           });
       }
 
