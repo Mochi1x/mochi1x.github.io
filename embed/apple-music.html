@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apple Music — 13th Reason (Embed)</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --card-bg: rgba(24, 24, 27, 0.6);
+      --card-border: rgba(63, 63, 70, 0.5);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      background: var(--bg) !important;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 12px;
+      background: var(--bg) !important;
+    }
+
+    .card {
+      background: var(--card-bg) !important;
+      border: 1px solid var(--card-border) !important;
+      border-radius: 16px;
+      overflow: hidden;
+      backdrop-filter: blur(12px) saturate(180%);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 32px rgba(245,158,11,0.15), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .iframe-container {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      height: 0;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    .iframe-container iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100% !important;
+      height: 100% !important;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="iframe-container">
+        <iframe
+          allow="autoplay *; encrypted-media *; fullscreen"
+          frameborder="0"
+          sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"
+          src="https://embed.music.apple.com/us/album/13th-reason/1873421961?i=1873421963"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
