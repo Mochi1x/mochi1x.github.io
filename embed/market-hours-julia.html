@@ -17,11 +17,11 @@
     --text-muted: #71717a;
     --accent: #f59e0b;
     --accent-light: rgba(245, 158, 11, 0.1);
-    --closed-bg: rgba(239, 68, 68, 0.1);
+    --closed-bg: transparent;
     --closed-border: rgba(239, 68, 68, 0.3);
     --closed-text: #f87171;
     --closed-dot: #f87171;
-    --open-bg: rgba(34, 197, 94, 0.1);
+    --open-bg: transparent;
     --open-border: rgba(34, 197, 94, 0.3);
     --open-text: #4ade80;
     --open-dot: #4ade80;
@@ -29,8 +29,10 @@
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  body {
-    background: transparent;
+  html, body {
+    background: transparent !important;
+    -webkit-background: transparent !important;
+    
     color: var(--text-main);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     min-height: auto; /* transparent for Notion */
@@ -39,6 +41,7 @@
   }
 
   .wrap {
+  background: transparent !important;
     max-width: 480px;
     margin: 0 auto;
     padding: 20px 16px 12px;
@@ -137,7 +140,8 @@
   }
 
   @media (max-width: 360px) {
-    .wrap { padding: 16px 12px; }
+    .wrap {
+  background: transparent !important; padding: 16px 12px; }
     .clocks { gap: 24px; }
     .clock .time { font-size: 24px; }
   }
