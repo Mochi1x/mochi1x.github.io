@@ -8,22 +8,69 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    :root { --bg: #0a0a0f; --card-bg: rgba(24,24,27,0.6); --card-border: rgba(63,63,70,0.5);
-            --text-main: #e4e4e7; --text-muted: #71717a; --accent: #f59e0b; }
+    :root {
+      --bg: #0a0a0f;
+      --card-bg: rgba(24,24,27,0.6);
+      --card-border: rgba(63,63,70,0.5);
+      --text-main: #e4e4e7;
+      --text-muted: #71717a;
+      --accent: #f59e0b;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { background: var(--bg); color: var(--text-main);
-                 font-family: "Inter", -apple-system, sans-serif; min-height: 100vh; overflow-x: hidden; }
-    .wrap { max-width: 900px; margin: 0 auto; padding: 40px 20px 60px; }
-    .header { text-align: center; margin-bottom: 24px; }
-    .header h1 { font-size: 24px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
-    .header p { color: var(--text-muted); font-size: 14px; opacity: 0.8; }
-    .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px;
-             overflow: hidden; backdrop-filter: blur(12px) saturate(180%);
-             box-shadow: 0 4px 24px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.05);
-             transition: transform 0.3s ease, box-shadow 0.3s ease; }
-    .card:hover { transform: scale(1.01); box-shadow: 0 8px 32px rgba(245,158,11,0.15), inset 0 1px 0 rgba(255,255,255,0.08); }
-    .player-wrapper { width: 100%; min-height: 180px; background: transparent; }
-    .footer { text-align: center; margin-top: 16px; font-size: 12px; color: var(--text-muted); }
+    html, body {
+      background: var(--bg);
+      color: var(--text-main);
+      font-family: "Inter", -apple-system, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .wrap {
+      max-width: 900px; margin: 0 auto;
+      padding: 40px 20px 60px;
+    }
+    .header {
+      text-align: center; margin-bottom: 24px;
+    }
+    .header h1 {
+      font-size: 24px; font-weight: 700; color: var(--text-main);
+      margin-bottom: 4px;
+    }
+    .header p {
+      color: var(--text-muted); font-size: 14px; opacity: 0.8;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      overflow: hidden;
+      backdrop-filter: blur(12px) saturate(180%);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+      transform: scale(1.01);
+      box-shadow: 0 8px 32px rgba(245,158,11,0.15), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .iframe-wrap {
+      width: 100%;
+      height: 0;
+      padding-bottom: 22.7%; /* 150/660 ≈ 0.227 — maintain aspect ratio */
+      position: relative;
+      background: transparent;
+    }
+    .iframe-wrap iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100% !important;
+      height: 100% !important;
+      border: 0;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
     .footer a { color: var(--accent); text-decoration: none; }
   </style>
 </head>
@@ -31,14 +78,24 @@
   <div class="wrap">
     <div class="header">
       <h1>Apple Music</h1>
-      <p>13th Reason — Album</p>
+      <p>13th Reason — Album by Nino Paid</p>
     </div>
+
     <div class="card">
-      <div class="player-wrapper">
-        <!doctype html><html><head> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1"> <title>Apple Music — 13th Reason</title> <script async="" src="https://js-cdn.music.apple.com/musickit/v3/amp/musickit.js"></script> <script async="" type="module" src="https://embed.music.apple.com/build/web-embed.esm.js" data-stencil data-resources-url="/build/" data-stencil-namespace="web-embed"></script> <script async="" nomodule="" src="https://embed.music.apple.com/build/web-embed.js" data-stencil></script> <script async="" type="module" data-resources-url="https://js-cdn.music.apple.com/musickit/v3/components/musickit-components/" src="https://js-cdn.music.apple.com/musickit/v3/components/musickit-components/musickit-components.esm.js"></script> <script async="" nomodule="" data-resources-url="https://js-cdn.music.apple.com/musickit/v3/components/musickit-components/" src="https://js-cdn.music.apple.com/musickit/v3/components/musickit-components/musickit-components.js"></script> <link href="https://embed.music.apple.com/build/web-embed.css" rel="stylesheet"> <link rel="apple-touch-icon" sizes="180x180" href="https://embed.music.apple.com/assets/favicon/music/favicon-180.png"> <link rel="icon" type="image/png" sizes="32x32" href="https://embed.music.apple.com/assets/favicon/music/favicon-32.png"> <link rel="icon" type="image/png" sizes="16x16" href="https://embed.music.apple.com/assets/favicon/music/favicon-16.png"> <link rel="mask-icon" href="https://embed.music.apple.com/assets/favicon/favicon.svg" color="#FF2D15"> </head> <body> <main aria-label="Apple Music Web Embed"> <embed-root realm="music"></embed-root> <div class="embed-loader"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 48" aria-role="presentation" focusable="false"> <path fill-rule="evenodd" d="M36.15 0c-.18.02-1.76.3-1.95.33l-19.7 3.7c-.58.13-1.03.32-1.37.6a2.1 2.1 0 0 0-.74 1.36c-.02.12-.05.36-.05.72v26.81c0 1.18-.9 2.16-2.1 2.38l-5.27.86A6 6 0 0 0 0 42.57C0 45.63 2.6 48 5.64 48c.37 0 .74-.04 1.11-.1l1.82-.36a7.13 7.13 0 0 0 5.8-7.08V17.25c0-1.22.4-1.54 1.42-1.78 0 0 17.52-3.52 18.37-3.68.22-.04.43-.07.61-.07.78 0 1.17.4 1.17 1.36v15.47c0 1.18-.89 2.16-2.1 2.39l-4.86.95c-3.1.55-5.35 2.97-5.35 5.77 0 3.04 2.8 5.4 6.08 5.4.4 0 .8-.03 1.2-.1l1.96-.35c4.23-1.2 5.13-5.07 5.13-7.75v-33C38 .74 37.41 0 36.36 0h-.2z"></path> </svg> </div> </main> </body></html>
+      <div class="iframe-wrap">
+        <iframe
+          allow="autoplay *; encrypted-media *; fullscreen"
+          frameborder="0"
+          height="150"
+          sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"
+          src="https://embed.music.apple.com/us/album/13th-reason/1873421961?i=1873421963"
+        ></iframe>
       </div>
     </div>
-    <p class="footer">Powered by <a href="https://music.apple.com" target="_blank" rel="noopener">Apple Music</a></p>
+
+    <p class="footer">
+      Powered by <a href="https://music.apple.com" target="_blank" rel="noopener">Apple Music</a>
+    </p>
   </div>
 </body>
 </html>
