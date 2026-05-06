@@ -49,6 +49,21 @@
         .tradingview-widget-container a[href*='tradingview'] {{
             display: none !important;
         }}
+    
+        /* Force pure black background on all elements */
+        .tradingview-widget-container *,
+        .tradingview-widget-container *::before,
+        .tradingview-widget-container *::after {
+            background-color: #000000 !important;
+        }
+        /* Ensure text and chart elements are visible */
+        .chart-price-up, .chart-price-down, .chart-price-neutral {
+            color: #00ff00 !important;
+        }
+        .chart-title, .chart-price-text {
+            color: #ffffff !important;
+        }
+
     </style>
 </head>
 <body>
@@ -72,7 +87,7 @@
         "symbol": "NASDAQ:AAPL",
         "theme": "dark",
         "timezone": "Etc/UTC",
-        "backgroundColor": "#0F0F0F",
+        "backgroundColor": "#000000",
         "gridColor": "rgba(242, 242, 242, 0.06)",
         "watchlist": [],
         "withdateranges": false,
